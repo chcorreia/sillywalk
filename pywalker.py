@@ -16,14 +16,15 @@
     Os objetos subsequentes podem ser comandados via objeto.andar()
 """
 
-import atexit
-import pygame
-import sys
+import sys, os.path, atexit, pygame
 
 #-------------------------------------------------------------------------------
 # VARIÁVEIS E CONSTANTES
 #-------------------------------------------------------------------------------
 _ENCERRADO = False # evitar realizar certas rotinas após o término
+_MAIN_DIR = os.path.abspath(os.path.dirname(sys.argv[0]) if __name__ == '__main__' else os.path.dirname(__file__))
+_FONTS_DIR = os.path.join(_MAIN_DIR, "fonts")
+print _MAIN_DIR
 
 #-------------------------------------------------------------------------------
 # ROTINAS
@@ -34,21 +35,19 @@ def espera():
 
     pronto = False
     tick_old = pygame.time.get_ticks()
-    print "espera"
+
     while not (pronto or _ENCERRADO):
 
-        event = pygame.event.wait()
+        event = pygame.event.wait() # espera um evento
 
-        if event.type == pygame.QUIT:
-            print "quit"
+        if event.type == pygame.QUIT: # se fechou a janela sai e evita esperar de novo
             _ENCERRADO = True
             sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                print "ESC"
+        elif event.type == pygame.KEYDOWN: # tecla pressionada
+
+            if event.key == pygame.K_ESCAPE: # ESC = encerra (mesmo no meio)
                 _ENCERRADO = True
             else:
-                print"key"
                 pronto = True
 
 
@@ -66,13 +65,15 @@ class Mundo():
         self._tam_x = largura
         self._tam_y = altura
         self._lado = lado
+        self._margem_x = 8
+        self._margem_y = 8
 
         # calcula os tamanhos em pixels do mundo
         self._pixels_x = self._tam_x * self._lado
         self._pixels_y = self._tam_y * self._lado
 
         # calcula os rects
-        self._rect_tudo = pygame.Rect(0,0,self._pixels_x, self._pixels_x)
+        self._rect_tudo = self._get_rect_tudo()
 
         # cria as screens (telas de atualização)
         self._screen_tudo = pygame.display.set_mode(self._rect_tudo.size, 0, 32)
@@ -85,6 +86,11 @@ class Mundo():
 
         # atualiza a tela
         pygame.display.flip()
+
+    def _get_rect_tudo(self):
+        largura = self._pixels_x + self._margem_x * 2
+        altura = self._pixels_y + self._margem_y * 2
+        return pygame.Rect(0,0, largura, altura)
 
 
 
@@ -103,7 +109,6 @@ def _main():
     pass
     Mundo()
     espera()
-    print "done."
 
 if __name__ == '__main__':
     _main()

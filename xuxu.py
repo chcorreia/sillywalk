@@ -1,11 +1,10 @@
-#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
+﻿#-------------------------------------------------------------------------------
+# Name:        xuxu.py
+# Purpose:     algum teste idiota, programa é reescrito a cada teste
 #
-# Author:      Ana Paula
+# Author:      Carlos H Correia - chcorreia@gmail.com
 #
 # Created:     07/08/2012
-# Copyright:   (c) Ana Paula 2012
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 #!/usr/bin/env python
