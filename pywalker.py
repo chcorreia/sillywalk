@@ -24,7 +24,8 @@ import sys, os.path, atexit, pygame
 _ENCERRADO = False # evitar realizar certas rotinas após o término
 _MAIN_DIR = os.path.abspath(os.path.dirname(sys.argv[0]) if __name__ == '__main__' else os.path.dirname(__file__))
 _FONTS_DIR = os.path.join(_MAIN_DIR, "fonts")
-print _MAIN_DIR
+_IMAGES_DIR = os.path.join(_MAIN_DIR, "images")
+_FIXED_FONT = os.path.join(_FONTS_DIR, "DejaVuSansMono.ttf")
 
 #-------------------------------------------------------------------------------
 # ROTINAS
@@ -62,35 +63,117 @@ class Mundo():
         """ Inicializa o Mundo """
 
         # transfere parâmetros para os atributos
-        self._tam_x = largura
-        self._tam_y = altura
-        self._lado = lado
-        self._margem_x = 8
-        self._margem_y = 8
+        self.tam_x = largura
+        self.tam_y = altura
+        self.lado = lado
 
-        # calcula os tamanhos em pixels do mundo
-        self._pixels_x = self._tam_x * self._lado
-        self._pixels_y = self._tam_y * self._lado
+        # define o tamanho das margens
+        self.margem_x = 12
+        self.margem_y = 12
+        self.margem_msgbox = 32
 
-        # calcula os rects
-        self._rect_tudo = self._get_rect_tudo()
+        # prepara o tabuleiro
+        self.calcula_tamanhos(self.tam_x, self.tam_y)
+        self.desenha_tabuleiro()
+
+    def calcula_tamanhos(self, tam_x, tam_y):
+        """ calcula o tamanho em pixels do mundo """
+
+        # calcula os tamanhos em pixels do tabuleiro
+        self.pixels_x = self.tam_x * self.lado
+        self.pixels_y = self.tam_y * self.lado
+
+        # calcula os rects externo e interno
+        self.rect_tudo = self.get_rect_tudo()
+        self.rect_dentro = self.get_rect_dentro()
+        self.rect_msgbox = self.get_rect_msgbox()
+
+    def get_rect_tudo(self):
+        """ retorna um Rect com os limites da tela """
+        largura = self.margem_x + self.pixels_x + self.margem_x # eu sei que é redundante
+        altura = self.margem_y + self.pixels_y + self.margem_y + self.margem_msgbox + self.margem_y
+        return pygame.Rect(0,0, largura, altura)
+
+    def get_rect_dentro(self):
+        """ retorna um Rect com os limites do tabuleiro dentro da tela """
+        return pygame.Rect(self.margem_x, self.margem_y, self.pixels_x-1, self.pixels_y-1)
+
+    def get_rect_msgbox(self):
+        """ retorna o Rect com os limites da caixa de mensagens abaixo do tabuleiro """
+        altura = self.margem_y + self.pixels_y + self.margem_y
+        return pygame.Rect(self.margem_x, altura, self.pixels_x, self.margem_msgbox)
+
+    def desenha_tabuleiro(self):
+        """ desenha o tabuleiro usando os parâmetros """
 
         # cria as screens (telas de atualização)
-        self._screen_tudo = pygame.display.set_mode(self._rect_tudo.size, 0, 32)
-        self._screen_tudo.convert_alpha()
+        self.screen_tudo = pygame.display.set_mode(self.rect_tudo.size, 0, 32)
+        self.screen_tudo.convert_alpha()
         pygame.init()
 
-        # desenha a moldura
-        self._cor_borda = (255,0,0)
-        pygame.draw.rect(self._screen_tudo, self._cor_borda, self._rect_tudo, 0)
+        # define as cores
+        self.cor_linha = pygame.color.Color("DarkSlateGray")
+        self.cor_borda = pygame.color.Color("WhiteSmoke")
+        self.cor_casas = (pygame.color.Color("Khaki1"), pygame.color.Color("Khaki3"))
+        self.cor_msgbox = pygame.color.Color("LightGoldenrod1")
+
+        # pinta o fundo
+        self.screen_tudo.fill(self.cor_borda)
+
+        # caixa de mensagens (provavelmente merece estar em um método)
+        pygame.draw.rect(self.screen_tudo, self.cor_msgbox, self.rect_msgbox, 0)
+        pygame.draw.rect(self.screen_tudo, self.cor_linha, self.rect_msgbox, 1)
+
+        # desenha o grid
+        self.desenha_grid()
 
         # atualiza a tela
         pygame.display.flip()
 
-    def _get_rect_tudo(self):
-        largura = self._pixels_x + self._margem_x * 2
-        altura = self._pixels_y + self._margem_y * 2
-        return pygame.Rect(0,0, largura, altura)
+    def desenha_grid(self):
+        """ desenha as casas do tabuleiro e retorna a tela criada """
+
+        # cria uma subsurface focada na área do grid
+        self.screen_dentro = self.screen_tudo.subsurface(self.rect_dentro)
+
+        # pinta as casas
+        pos_x = 0
+        cor = 0
+        for x in range(self.tam_x): # em cada coluna
+
+            pos_y = 0
+            for y in range(self.tam_y): # em cada linha
+
+                # calcula o rect da casa
+                box = pygame.Rect(pos_x, pos_y, self.lado, self.lado)
+
+                # pinta a casa
+                pygame.draw.rect(self.screen_dentro, self.cor_casas[cor%2], box)
+
+                # incrementa Y
+                pos_y += self.lado
+                cor += 1
+
+            # incrementa X
+            pos_x += self.lado
+            cor += 1
+
+        # risca o grid horizontal
+        for x in range(1,self.tam_x):
+            pygame.draw.line(self.screen_dentro, self.cor_linha, (x*self.lado, 0), (x*self.lado, self.pixels_y))
+
+        # risca o grid vertical
+        for y in range(1,self.tam_y):
+            pygame.draw.line(self.screen_dentro, self.cor_linha, (0, y*self.lado), (self.pixels_x, y*self.lado))
+
+        pygame.draw.rect(self.screen_dentro, self.cor_linha, (0,0,self.pixels_x-1,self.pixels_y-1), 1)
+
+        # salva a imagem original do grid para simplificar as atualizações
+        self.screen_grid = self.screen_dentro.copy()
+
+    def mensagem(self):
+        pass
+
 
 
 

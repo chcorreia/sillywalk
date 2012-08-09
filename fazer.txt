@@ -1,3 +1,28 @@
-Mundo
-- Desenhar o display
-- Criar o grid
+Plano de implantação
+
+Mundo básico
+- Desenha o grid
+- Mostrar números nas casas
+
+Mensagens
+- Mostra mensagens
+- Acende o mostrador quando a mensagem aparece (piscar?)
+
+Objetos
+- Objeto básico
+- Movimentação
+- Checar colisão e borda
+- Balão de fala?
+- Objetos fantasmas (não colidem)
+- Nomes para todos os objetos
+
+Animação
+- Andar suavemente, e não aos trancos
+- Controle da velocidade na interface
+- Destacar X,Y quando passa o mouse (thread)
+
+Dominós
+- Valores
+
+Cartas do baralho
+- Valores, Naipes
