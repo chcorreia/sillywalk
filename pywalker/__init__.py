@@ -43,13 +43,17 @@ def espera():
 
         if event.type == pygame.QUIT: # se fechou a janela sai e evita esperar de novo
             _ENCERRADO = True
-            sys.exit()
+            sys.exit()		
+		
+        elif event.type == pygame.MOUSEBUTTONUP:
+			pronto = True
+			
         elif event.type == pygame.KEYDOWN: # tecla pressionada
 
             if event.key == pygame.K_ESCAPE: # ESC = encerra (mesmo no meio)
                 _ENCERRADO = True
             else:
-                pronto = True
+                pronto = True		
 
 
 #-------------------------------------------------------------------------------
@@ -59,7 +63,7 @@ def espera():
 class Mundo():
     """ Classe que contém o tabuleiro e o mostra na tela """
 
-    def __init__(self, largura=8, altura=8, lado=64):
+    def __init__(self, largura=8, altura=8, lado=48):
         """ Inicializa o Mundo """
 
         # transfere parâmetros para os atributos
@@ -68,8 +72,8 @@ class Mundo():
         self.lado = lado
 
         # define o tamanho das margens
-        self.margem_x = 12
-        self.margem_y = 12
+        self.margem_x = 4
+        self.margem_y = 4
         self.margem_msgbox = 32
 
         # prepara o tabuleiro
@@ -173,25 +177,26 @@ class Mundo():
 
     def mensagem(self):
         pass
+		
 
-
-
-
-
-
+#-------------------------------------------------------------------------------
+# FINALIZAÇÃO
+#-------------------------------------------------------------------------------		
+@atexit.register
+def sair():
+	espera()
+	pygame.quit()
 
 #-------------------------------------------------------------------------------
 # INICIALIZAÇÃO
 #-------------------------------------------------------------------------------
-atexit.register(espera)
+
 
 #-------------------------------------------------------------------------------
 # MAIN
 #-------------------------------------------------------------------------------
 def _main():
-    pass
     Mundo()
-    espera()
 
 if __name__ == '__main__':
     _main()

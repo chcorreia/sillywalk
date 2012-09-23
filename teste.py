@@ -11,7 +11,8 @@
 
 import atexit
 
+@atexit.register
 def xuxu():
     print "hey"
 
-atexit.register(xuxu)
+print "acabou"
