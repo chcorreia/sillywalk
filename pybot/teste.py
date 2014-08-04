@@ -3,13 +3,10 @@
 from pybot import *
 
 # desenha o tabuleiro
-mundo = Mundo(altura=8, largura=8)
-Robot(2,1)
+mundo = Mundo(altura=8, largura=8, espera=True)
+Robot(4, 1)
+
+dizer(u"Juca vai à feira")
 
 while True:
-    andar(direita)
-    andar(direita)
-    andar(abaixo)
-    andar(esquerda)
-    andar(esquerda)
     andar(acima)
